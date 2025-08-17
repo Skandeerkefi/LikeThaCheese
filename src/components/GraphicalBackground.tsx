@@ -9,7 +9,6 @@ export function GraphicalBackground() {
 		const ctx = canvas.getContext("2d");
 		if (!ctx) return;
 
-		// Resize canvas
 		const resizeCanvas = () => {
 			canvas.width = window.innerWidth;
 			canvas.height = window.innerHeight;
@@ -17,7 +16,6 @@ export function GraphicalBackground() {
 		resizeCanvas();
 		window.addEventListener("resize", resizeCanvas);
 
-		// Particles
 		interface Particle {
 			x: number;
 			y: number;
@@ -29,11 +27,12 @@ export function GraphicalBackground() {
 		}
 
 		const particles: Particle[] = [];
-		const particleCount = 40;
+		const particleCount = 50; // increased particle count
 		const colors = [
-			"rgba(255, 0, 0, ", // red
-			"rgba(255, 255, 255, ", // white
-			"rgba(120, 120, 120, ", // gray
+			"rgba(252, 198, 63,", // cheese yellow
+			"rgba(215, 89, 11,", // cheddar orange
+			"rgba(251, 222, 150,", // light cheese
+			"rgba(111, 53, 4,", // crust brown
 		];
 
 		for (let i = 0; i < particleCount; i++) {
@@ -49,7 +48,6 @@ export function GraphicalBackground() {
 			});
 		}
 
-		// Floating T-shirts
 		interface FloatingItem {
 			x: number;
 			y: number;
@@ -60,28 +58,58 @@ export function GraphicalBackground() {
 			rotationSpeed: number;
 			layer: number;
 			opacity: number;
+			image: HTMLImageElement;
 		}
 
-		const tshirtImage = new Image();
-		tshirtImage.src =
-			"https://i.ibb.co/ksFzpHVx/Capture-d-cran-2025-08-11-133856-removebg-preview.png";
+		const cheeseSources = [
+			"https://i.ibb.co/TBzNFcMz/Capture-d-cran-2025-08-17-030301-removebg-preview.png",
+			"https://i.ibb.co/KjZCtD6t/Capture-d-cran-2025-08-17-030335-removebg-preview.png",
+		];
+		const cheeseImages: HTMLImageElement[] = cheeseSources.map((src) => {
+			const img = new Image();
+			img.src = src;
+			return img;
+		});
 
-		const shirts: FloatingItem[] = [];
-		const shirtCount = 25;
+		const cheeses: FloatingItem[] = [];
+		const cheeseCount = 40; // more cheese
 
-		for (let i = 0; i < shirtCount; i++) {
+		// Helper to check if a new cheese overlaps existing ones
+		const isFarEnough = (x: number, y: number, size: number) => {
+			return !cheeses.some(
+				(c) => Math.hypot(c.x - x, c.y - y) < (c.size + size) * 0.8 // minimum distance
+			);
+		};
+
+		for (let i = 0; i < cheeseCount; i++) {
 			const layer = Math.floor(Math.random() * 3); // 0 = far, 2 = close
-			const baseSize = [50, 80, 120][layer];
-			shirts.push({
-				x: Math.random() * canvas.width,
-				y: Math.random() * canvas.height,
-				size: baseSize + Math.random() * 40,
+			const baseSize = [40, 70, 110][layer];
+			const cheeseImg =
+				cheeseImages[Math.floor(Math.random() * cheeseImages.length)];
+
+			let x = Math.random() * canvas.width;
+			let y = Math.random() * canvas.height;
+			let size = baseSize + Math.random() * 30;
+
+			let tries = 0;
+			while (!isFarEnough(x, y, size) && tries < 50) {
+				// prevent overlapping
+				x = Math.random() * canvas.width;
+				y = Math.random() * canvas.height;
+				tries++;
+			}
+
+			cheeses.push({
+				x,
+				y,
+				size,
 				speedX: (Math.random() - 0.5) * (0.1 + layer * 0.05),
 				speedY: (Math.random() - 0.5) * (0.1 + layer * 0.05),
 				rotation: Math.random() * Math.PI * 2,
 				rotationSpeed: (Math.random() - 0.5) * 0.002,
 				layer,
-				opacity: 0.3 + layer * 0.3,
+				opacity: 0.4 + layer * 0.3,
+				image: cheeseImg,
 			});
 		}
 
@@ -91,11 +119,9 @@ export function GraphicalBackground() {
 		const render = () => {
 			time += 0.01;
 
-			// Background
-			ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+			ctx.fillStyle = "rgba(251, 222, 150, 0.2)";
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-			// Particles
 			particles.forEach((p) => {
 				p.x += p.speedX;
 				p.y += p.speedY;
@@ -111,33 +137,34 @@ export function GraphicalBackground() {
 				ctx.fill();
 			});
 
-			// Floating shirts
-			shirts.forEach((shirt, idx) => {
-				// Wavy motion
-				shirt.x +=
-					shirt.speedX + Math.sin(time + idx) * 0.1 * (shirt.layer + 1);
-				shirt.y +=
-					shirt.speedY + Math.cos(time + idx) * 0.1 * (shirt.layer + 1);
-				shirt.rotation += shirt.rotationSpeed;
+			cheeses.forEach((cheese, idx) => {
+				const layerSpeed = 0.3 + cheese.layer * 0.2;
 
-				if (shirt.x > canvas.width) shirt.x = -shirt.size;
-				if (shirt.x < -shirt.size) shirt.x = canvas.width;
-				if (shirt.y > canvas.height) shirt.y = -shirt.size;
-				if (shirt.y < -shirt.size) shirt.y = canvas.height;
+				cheese.x += cheese.speedX * layerSpeed + Math.sin(time + idx) * 0.5;
+				cheese.y += cheese.speedY * layerSpeed + Math.cos(time + idx) * 0.5;
+				cheese.rotation += cheese.rotationSpeed + Math.sin(time + idx) * 0.005;
+
+				const scale = 0.9 + Math.sin(time + idx) * 0.1;
+
+				if (cheese.x > canvas.width) cheese.x = -cheese.size;
+				if (cheese.x < -cheese.size) cheese.x = canvas.width;
+				if (cheese.y > canvas.height) cheese.y = -cheese.size;
+				if (cheese.y < -cheese.size) cheese.y = canvas.height;
 
 				ctx.save();
-				ctx.globalAlpha = shirt.opacity;
-				ctx.shadowColor = "rgba(0,0,0,0.5)";
+				ctx.globalAlpha = cheese.opacity;
+				ctx.shadowColor = "rgba(111,53,4,0.5)";
 				ctx.shadowBlur = 15;
 
-				ctx.translate(shirt.x + shirt.size / 2, shirt.y + shirt.size / 2);
-				ctx.rotate(shirt.rotation);
+				ctx.translate(cheese.x + cheese.size / 2, cheese.y + cheese.size / 2);
+				ctx.rotate(cheese.rotation);
+				ctx.scale(scale, scale);
 				ctx.drawImage(
-					tshirtImage,
-					-shirt.size / 2,
-					-shirt.size / 2,
-					shirt.size,
-					shirt.size
+					cheese.image,
+					-cheese.size / 2,
+					-cheese.size / 2,
+					cheese.size,
+					cheese.size
 				);
 				ctx.restore();
 			});
@@ -145,9 +172,14 @@ export function GraphicalBackground() {
 			animationFrameId = requestAnimationFrame(render);
 		};
 
-		tshirtImage.onload = () => {
-			render();
-		};
+		Promise.all(
+			cheeseImages.map(
+				(img) =>
+					new Promise((resolve) => {
+						img.onload = resolve;
+					})
+			)
+		).then(() => render());
 
 		return () => {
 			window.removeEventListener("resize", resizeCanvas);

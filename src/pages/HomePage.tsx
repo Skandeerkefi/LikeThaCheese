@@ -10,6 +10,14 @@ import { useSlotCallStore } from "@/store/useSlotCallStore";
 import { useGiveawayStore } from "@/store/useGiveawayStore";
 import GraphicalBackground from "@/components/GraphicalBackground";
 
+// Cheese Theme Colors
+const COLORS = {
+	primary: "#d7590b", // cheddar orange
+	accent: "#fcc63f", // cheese yellow
+	dark: "#6f3504", // crust brown
+	light: "#fbde96", // light cheese
+};
+
 function HomePage() {
 	const { slotCalls } = useSlotCallStore();
 	const { giveaways } = useGiveawayStore();
@@ -62,44 +70,67 @@ function HomePage() {
 	}, [monthEndISO]);
 
 	return (
-		<div className='relative flex flex-col min-h-screen text-white'>
-			{/* 🎨 Animated Graphical Background */}
+		<div className='relative flex flex-col min-h-screen text-dark'>
+			{/* Animated Cheese Background */}
 			<GraphicalBackground />
 
 			<Navbar />
 
 			<main className='relative z-10 flex-grow'>
-				{/* Modern Hero Section with Kick Player Side-by-Side */}
+				{/* Hero Section */}
 				<section className='flex flex-col-reverse items-center justify-center max-w-6xl gap-16 px-6 mx-auto py-28 sm:flex-row sm:items-center'>
-					{/* Text Content */}
 					<div className='max-w-xl text-center sm:text-left'>
-						<h1 className='text-5xl font-extrabold leading-tight tracking-tight bg-gradient-to-r from-[#E10600] via-[#B03400] to-[#E10600] bg-clip-text text-transparent drop-shadow-md'>
-							MisterTee&apos;s <br /> Official Stream
+						<h1
+							className='text-5xl font-extrabold leading-tight tracking-tight drop-shadow-md'
+							style={{
+								background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.accent}, ${COLORS.primary})`,
+								WebkitBackgroundClip: "text",
+								color: "transparent",
+							}}
+						>
+							LikeThaCheese&apos;s <br /> Official Stream
 						</h1>
 
-						<div className='w-24 h-1 mt-6 rounded-full bg-[#E10600] animate-pulse' />
+						<div
+							className='w-24 h-1 mt-6 rounded-full animate-pulse'
+							style={{ backgroundColor: COLORS.primary }}
+						/>
 
-						<p className='mt-6 text-lg font-medium tracking-wide text-gray-300'>
-							Watch MisterTee live on Kick — your go-to destination for
-							thrilling gambling streams, giveaways, and more.
+						<p
+							className='mt-6 text-lg font-medium tracking-wide'
+							style={{ color: COLORS.dark }}
+						>
+							Watch LikeThaCheese live on Kick — thrilling gambling streams,
+							giveaways, and more.
 						</p>
 					</div>
 
-					{/* Kick Stream Embed */}
-					<div className='w-full max-w-xl aspect-video rounded-3xl overflow-hidden shadow-lg border-4 border-[#E10600]'>
+					<div
+						className='w-full max-w-xl overflow-hidden border-4 shadow-lg aspect-video rounded-3xl'
+						style={{ borderColor: COLORS.primary }}
+					>
 						<iframe
-							src='https://player.kick.com/mistertee'
+							src='https://player.kick.com/LikeThaCheese'
 							frameBorder='0'
 							allowFullScreen
-							title='MisterTee Live Stream'
+							title='LikeThaCheese Live Stream'
 							className='w-full h-full'
 						></iframe>
 					</div>
 				</section>
 
-				{/* Metric-style Countdown Section */}
-				<section className='max-w-4xl mx-auto px-6 py-10 rounded-3xl bg-black/70 border border-[#E10600] shadow-lg'>
-					<h2 className='text-center text-3xl font-semibold mb-8 text-[#E10600] tracking-wide'>
+				{/* Countdown Section */}
+				<section
+					className='max-w-4xl px-6 py-10 mx-auto shadow-lg rounded-3xl'
+					style={{
+						backgroundColor: COLORS.light,
+						border: `4px solid ${COLORS.primary}`,
+					}}
+				>
+					<h2
+						className='mb-8 text-3xl font-semibold tracking-wide text-center'
+						style={{ color: COLORS.primary }}
+					>
 						⏳ Monthly Leaderboard Ends In
 					</h2>
 
@@ -112,12 +143,14 @@ function HomePage() {
 							return (
 								<div
 									key={label}
-									className='flex flex-col items-center justify-center bg-[#E10600]/10 rounded-xl py-6 px-8 min-w-[80px] sm:min-w-[100px] shadow-sm'
+									className='flex flex-col items-center justify-center rounded-xl py-6 px-8 min-w-[80px] sm:min-w-[100px] shadow-sm'
+									style={{ backgroundColor: `${COLORS.accent}33` }}
 								>
-									<span className='text-5xl font-extrabold tracking-tight text-white'>
-										{value}
-									</span>
-									<span className='mt-2 text-sm font-medium text-[#E10600]'>
+									<span className='text-5xl font-extrabold'>{value}</span>
+									<span
+										className='mt-2 text-sm font-medium'
+										style={{ color: COLORS.primary }}
+									>
 										{label}
 									</span>
 								</div>
@@ -130,13 +163,18 @@ function HomePage() {
 				<section className='container py-16'>
 					<div className='flex items-center justify-between mb-8'>
 						<div className='flex items-center gap-2'>
-							<Crown className='w-6 h-6 text-[#E10600]' />
+							<Crown className='w-6 h-6' style={{ color: COLORS.primary }} />
 							<h2 className='text-2xl font-bold'>Monthly Leaderboard</h2>
 						</div>
 						<Button
 							variant='outline'
 							size='sm'
-							className='border-[#E10600] text-[#E10600] hover:bg-[#E10600] hover:text-white bg-black'
+							className='hover:bg-[#d7590b] hover:text-white'
+							style={{
+								borderColor: COLORS.primary,
+								color: COLORS.primary,
+								backgroundColor: COLORS.light,
+							}}
 							asChild
 						>
 							<Link to='/leaderboard' className='flex items-center gap-1'>
@@ -147,32 +185,44 @@ function HomePage() {
 					<LeaderboardTable period='monthly' data={topLeaderboard} />
 				</section>
 
-				{/* Redesigned Features Section */}
+				{/* Features */}
 				<section className='max-w-6xl px-6 py-16 mx-auto'>
-					<h2 className='mb-12 text-4xl font-bold text-center text-white'>
+					<h2
+						className='mb-12 text-4xl font-bold text-center'
+						style={{ color: COLORS.dark }}
+					>
 						What We Offer
 					</h2>
 					<div className='grid grid-cols-1 gap-10 sm:grid-cols-3'>
 						{[
 							{
 								icon: (
-									<Dices className='w-12 h-12 text-[#E10600] animate-pulse' />
+									<Dices
+										className='w-12 h-12 animate-pulse'
+										style={{ color: COLORS.primary }}
+									/>
 								),
 								title: "Exciting Gambling Streams",
 								description:
-									"Watch thrilling slot sessions, casino games, and big win moments with MisterTee on Rainbet.",
+									"Watch thrilling slot sessions, casino games, and big win moments with LikeThaCheese on Rainbet.",
 							},
 							{
 								icon: (
-									<Users className='w-12 h-12 text-[#E10600] animate-pulse' />
+									<Users
+										className='w-12 h-12 animate-pulse'
+										style={{ color: COLORS.primary }}
+									/>
 								),
 								title: "Slot Call System",
 								description:
-									"Suggest slots for MisterTee to play during streams and see your suggestions come to life.",
+									"Suggest slots for LikeThaCheese to play during streams and see your suggestions come to life.",
 							},
 							{
 								icon: (
-									<Gift className='w-12 h-12 text-[#E10600] animate-pulse' />
+									<Gift
+										className='w-12 h-12 animate-pulse'
+										style={{ color: COLORS.primary }}
+									/>
 								),
 								title: "Regular Giveaways",
 								description:
@@ -181,59 +231,51 @@ function HomePage() {
 						].map(({ icon, title, description }) => (
 							<div
 								key={title}
-								className='flex flex-col items-center bg-black/60 backdrop-blur-md rounded-3xl p-8 shadow-lg border border-[#E10600] hover:scale-[1.05] transition-transform cursor-default'
+								className='flex flex-col items-center rounded-3xl p-8 shadow-lg hover:scale-[1.05] transition-transform'
+								style={{
+									backgroundColor: COLORS.light,
+									border: `2px solid ${COLORS.primary}`,
+								}}
 							>
-								<div className='flex items-center justify-center w-20 h-20 rounded-full bg-black/50 border-2 border-[#E10600] mb-6'>
+								<div
+									className='flex items-center justify-center w-20 h-20 mb-6 rounded-full'
+									style={{
+										backgroundColor: `${COLORS.accent}50`,
+										border: `2px solid ${COLORS.primary}`,
+									}}
+								>
 									{icon}
 								</div>
-								<h3 className='text-xl font-semibold text-white mb-3 relative after:absolute after:-bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-14 after:h-[2px] after:bg-gradient-to-r after:from-[#E10600] after:to-[#B03400]'>
+								<h3
+									className='mb-3 text-xl font-semibold'
+									style={{ color: COLORS.primary }}
+								>
 									{title}
 								</h3>
-								<p className='text-center text-gray-300'>{description}</p>
+								<p className='text-center' style={{ color: COLORS.dark }}>
+									{description}
+								</p>
 							</div>
 						))}
 					</div>
 				</section>
 
-				{/* Redesigned Schedule Section */}
+				{/* Schedule */}
 				<section className='max-w-5xl px-6 py-16 mx-auto'>
-					<h2 className='mb-8 text-4xl font-bold text-center text-white'>
+					<h2
+						className='mb-8 text-4xl font-bold text-center'
+						style={{ color: COLORS.dark }}
+					>
 						📅 Stream Schedule
 					</h2>
-					<p className='max-w-xl mx-auto mb-10 text-center text-gray-400'>
-						MisterTee goes live <strong>every day</strong> — join the fun
+					<p
+						className='max-w-xl mx-auto mb-10 text-center'
+						style={{ color: COLORS.dark }}
+					>
+						LikeThaCheese goes live <strong>every day</strong> — join the fun
 						anytime!
 					</p>
 
-					{/* Timeline container */}
-					<div className='relative items-center justify-between hidden max-w-full gap-8 px-4 mx-auto select-none sm:flex'>
-						{/* Horizontal connecting line */}
-						<div className='absolute top-1/2 left-8 right-8 h-1 bg-[#E10600]/30 rounded-full -z-10'></div>
-
-						{[
-							"Monday",
-							"Tuesday",
-							"Wednesday",
-							"Thursday",
-							"Friday",
-							"Saturday",
-							"Sunday",
-						].map((day) => (
-							<div
-								key={day}
-								className='flex flex-col items-center cursor-default group'
-							>
-								<div className='w-14 h-14 rounded-full border-4 border-[#E10600] bg-black/70 shadow-[0_0_12px_#E10600] group-hover:scale-110 transition-transform flex items-center justify-center text-[#E10600] font-semibold text-lg select-text'>
-									{day.slice(0, 3)}
-								</div>
-								<p className='mt-3 text-sm text-gray-300 select-text'>
-									7:30pm EST
-								</p>
-							</div>
-						))}
-					</div>
-
-					{/* Mobile stacked schedule */}
 					<div className='flex flex-col gap-4 sm:hidden'>
 						{[
 							"Monday",
@@ -246,10 +288,19 @@ function HomePage() {
 						].map((day) => (
 							<div
 								key={day}
-								className='bg-black/60 rounded-xl border border-[#E10600] p-4 shadow-md flex justify-between items-center'
+								className='flex items-center justify-between p-4 shadow-md rounded-xl'
+								style={{
+									backgroundColor: COLORS.light,
+									border: `2px solid ${COLORS.primary}`,
+								}}
 							>
-								<span className='font-semibold text-[#E10600]'>{day}</span>
-								<span className='text-gray-300'>7:30pm EST</span>
+								<span
+									className='font-semibold'
+									style={{ color: COLORS.primary }}
+								>
+									{day}
+								</span>
+								<span style={{ color: COLORS.dark }}>7:30pm EST</span>
 							</div>
 						))}
 					</div>
@@ -257,11 +308,12 @@ function HomePage() {
 					<div className='flex justify-center mt-12'>
 						<Button
 							size='lg'
-							className='bg-[#E10600] hover:bg-[#b00500] text-white shadow-lg transition'
+							className='transition transform shadow-lg hover:scale-105'
+							style={{ backgroundColor: COLORS.primary, color: COLORS.light }}
 							asChild
 						>
 							<a
-								href='https://kick.com/MisterTee'
+								href='https://kick.com/LikeThaCheese'
 								target='_blank'
 								rel='noreferrer'
 							>

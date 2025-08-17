@@ -22,6 +22,14 @@ interface SlotCallProps {
 	isUserView?: boolean;
 }
 
+const COLORS = {
+	primary: "#d7590b",
+	accent: "#fcc63f",
+	dark: "#6f3504",
+	light: "#fbde96",
+	bg: "#010001",
+};
+
 export function SlotCallCard({
 	id,
 	slotName,
@@ -43,7 +51,14 @@ export function SlotCallCard({
 	const showBonusInput = isUserView && x250Hit && !bonusCall;
 
 	return (
-		<div className='flex flex-col p-4 rounded-lg glass-card bg-[#010001] border border-red-700 text-[#f4f5f4]'>
+		<div
+			className='flex flex-col p-4 border rounded-lg shadow-md'
+			style={{
+				backgroundColor: COLORS.bg,
+				borderColor: COLORS.primary,
+				color: COLORS.light,
+			}}
+		>
 			{/* Header */}
 			<div className='flex items-start justify-between'>
 				<h3 className='text-lg font-bold'>{slotName}</h3>
@@ -51,12 +66,15 @@ export function SlotCallCard({
 			</div>
 
 			{/* Requester */}
-			<div className='mt-2 text-sm text-red-500'>
-				Requested by: <span className='text-[#f4f5f4]'>{requester}</span>
+			<div className='mt-2 text-sm' style={{ color: COLORS.primary }}>
+				Requested by: <span style={{ color: COLORS.light }}>{requester}</span>
 			</div>
 
 			{/* Time */}
-			<div className='flex items-center gap-1 mt-4 text-xs text-[#f4f5f4]/70'>
+			<div
+				className='flex items-center gap-1 mt-4 text-xs'
+				style={{ color: COLORS.light }}
+			>
 				<Clock className='w-3 h-3' />
 				{timestamp}
 			</div>
@@ -64,7 +82,10 @@ export function SlotCallCard({
 			{/* Admin Controls */}
 			{isAdminView && (
 				<div className='mt-4 space-y-2'>
-					<label className='flex items-center gap-2 text-sm text-red-400'>
+					<label
+						className='flex items-center gap-2 text-sm'
+						style={{ color: COLORS.primary }}
+					>
 						<input
 							type='checkbox'
 							checked={x250Hit || false}
@@ -78,14 +99,16 @@ export function SlotCallCard({
 						<div className='flex gap-2'>
 							<button
 								onClick={() => onAccept?.(id, x250Hit || false)}
-								className='flex items-center justify-center flex-1 gap-1 px-3 py-1 text-sm bg-green-600 rounded hover:bg-green-700'
+								className='flex items-center justify-center flex-1 gap-1 px-3 py-1 text-sm rounded'
+								style={{ backgroundColor: COLORS.accent, color: COLORS.dark }}
 							>
 								<Check className='w-4 h-4' /> Accept
 							</button>
 
 							<button
 								onClick={() => onReject?.(id)}
-								className='flex items-center justify-center flex-1 gap-1 px-3 py-1 text-sm bg-red-600 rounded hover:bg-red-700'
+								className='flex items-center justify-center flex-1 gap-1 px-3 py-1 text-sm rounded'
+								style={{ backgroundColor: COLORS.dark, color: COLORS.light }}
 							>
 								<X className='w-4 h-4' /> Reject
 							</button>
@@ -95,7 +118,8 @@ export function SlotCallCard({
 					{(status === "accepted" || status === "pending") && (
 						<button
 							onClick={() => onMarkPlayed?.(id)}
-							className='w-full py-1 mt-2 bg-red-700 hover:bg-red-600 text-[#f4f5f4] rounded'
+							className='w-full py-1 mt-2 rounded'
+							style={{ backgroundColor: COLORS.primary, color: COLORS.light }}
 						>
 							Mark as Played
 						</button>
@@ -112,7 +136,8 @@ export function SlotCallCard({
 								onDelete?.(id);
 							}
 						}}
-						className='w-full py-1 mt-2 bg-red-800 rounded hover:bg-red-700'
+						className='w-full py-1 mt-2 rounded'
+						style={{ backgroundColor: COLORS.dark, color: COLORS.light }}
 					>
 						Delete
 					</button>
@@ -121,17 +146,23 @@ export function SlotCallCard({
 
 			{/* Bonus Call Submitted */}
 			{bonusCall && (
-				<div className='mt-4 text-sm text-red-400'>
+				<div className='mt-4 text-sm' style={{ color: COLORS.primary }}>
 					<Gift className='inline w-4 h-4 mr-1' />
 					Bonus Call:{" "}
-					<span className='font-semibold text-[#f4f5f4]'>{bonusCall.name}</span>
+					<span style={{ color: COLORS.light, fontWeight: "bold" }}>
+						{bonusCall.name}
+					</span>
 				</div>
 			)}
 
 			{/* Bonus Call Submission */}
 			{showBonusInput && (
 				<div className='mt-4 space-y-2'>
-					<label htmlFor={`bonus-${id}`} className='text-sm text-red-400'>
+					<label
+						htmlFor={`bonus-${id}`}
+						className='text-sm'
+						style={{ color: COLORS.primary }}
+					>
 						🎁 20$ Bonus Call Slot Name
 					</label>
 					<input
@@ -140,13 +171,19 @@ export function SlotCallCard({
 						placeholder='e.g. Sugar Rush'
 						value={bonusInput}
 						onChange={(e) => setBonusInput(e.target.value)}
-						className='w-full px-3 py-1 bg-[#010001] border border-red-700 text-[#f4f5f4] rounded'
+						className='w-full px-3 py-1 rounded'
+						style={{
+							backgroundColor: COLORS.bg,
+							borderColor: COLORS.primary,
+							color: COLORS.light,
+						}}
 					/>
 					<button
 						onClick={() =>
 							bonusInput.trim() && onBonusSubmit?.(id, bonusInput.trim())
 						}
-						className='w-full py-1 mt-1 bg-red-700 hover:bg-red-600 text-[#f4f5f4] rounded'
+						className='w-full py-1 mt-1 rounded'
+						style={{ backgroundColor: COLORS.primary, color: COLORS.light }}
 					>
 						Submit Bonus Call
 					</button>
@@ -160,11 +197,30 @@ function StatusBadge({ status }: { status: SlotCallStatus }) {
 	const baseClass =
 		"text-xs px-2 py-0.5 rounded-full border font-medium inline-block";
 
+	const COLORS = {
+		pending: "#d7590b",
+		accepted: "#fcc63f",
+		played: "#fbde96",
+		rejected: "#6f3504",
+	};
+
+	const BG = {
+		pending: "#d7590b22",
+		accepted: "#fcc63f22",
+		played: "#fbde9622",
+		rejected: "#6f350422",
+	};
+
 	switch (status) {
 		case "pending":
 			return (
 				<span
-					className={`${baseClass} text-red-400 border-red-400 bg-red-400/20`}
+					className={`${baseClass}`}
+					style={{
+						color: COLORS.pending,
+						borderColor: COLORS.pending,
+						backgroundColor: BG.pending,
+					}}
 				>
 					Pending
 				</span>
@@ -172,7 +228,12 @@ function StatusBadge({ status }: { status: SlotCallStatus }) {
 		case "accepted":
 			return (
 				<span
-					className={`${baseClass} text-green-400 border-green-400 bg-green-400/20`}
+					className={`${baseClass}`}
+					style={{
+						color: COLORS.accepted,
+						borderColor: COLORS.accepted,
+						backgroundColor: BG.accepted,
+					}}
 				>
 					Accepted
 				</span>
@@ -180,7 +241,12 @@ function StatusBadge({ status }: { status: SlotCallStatus }) {
 		case "played":
 			return (
 				<span
-					className={`${baseClass} text-[#f4f5f4] border-[#f4f5f4] bg-[#f4f5f4]/20`}
+					className={`${baseClass}`}
+					style={{
+						color: COLORS.played,
+						borderColor: COLORS.played,
+						backgroundColor: BG.played,
+					}}
 				>
 					Played
 				</span>
@@ -189,7 +255,12 @@ function StatusBadge({ status }: { status: SlotCallStatus }) {
 		default:
 			return (
 				<span
-					className={`${baseClass} text-red-500 border-red-500 bg-red-500/20`}
+					className={`${baseClass}`}
+					style={{
+						color: COLORS.rejected,
+						borderColor: COLORS.rejected,
+						backgroundColor: BG.rejected,
+					}}
 				>
 					Rejected
 				</span>

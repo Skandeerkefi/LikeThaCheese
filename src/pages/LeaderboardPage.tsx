@@ -17,6 +17,13 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import GraphicalBackground from "@/components/GraphicalBackground";
 
+const COLORS = {
+	primary: "#d7590b",
+	accent: "#fcc63f",
+	dark: "#6f3504",
+	light: "#fbde96",
+};
+
 function LeaderboardPage() {
 	const { monthlyLeaderboard, fetchLeaderboard, isLoading, error } =
 		useLeaderboardStore();
@@ -59,7 +66,7 @@ function LeaderboardPage() {
 	}, [end_at]);
 
 	return (
-		<div className='relative flex flex-col min-h-screen text-white '>
+		<div className='relative flex flex-col min-h-screen text-white'>
 			{/* Background Canvas */}
 			<GraphicalBackground />
 
@@ -68,7 +75,10 @@ function LeaderboardPage() {
 			<main className='container relative z-10 flex-grow max-w-6xl px-6 py-12 mx-auto'>
 				{/* Header */}
 				<div className='flex flex-col items-center justify-between gap-4 mb-10 sm:flex-row'>
-					<div className='flex items-center gap-3 text-[#AF2D03]'>
+					<div
+						className='flex items-center gap-3'
+						style={{ color: COLORS.primary }}
+					>
 						<Crown className='w-7 h-7' />
 						<h1 className='text-3xl font-extrabold tracking-tight'>
 							Rainbet Monthly Leaderboard
@@ -79,14 +89,22 @@ function LeaderboardPage() {
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<button
-									className='flex items-center gap-1 text-sm font-semibold text-[#EA6D0C] hover:text-[#AF2D03] transition-colors'
+									className='flex items-center gap-1 text-sm font-semibold transition-colors'
+									style={{ color: COLORS.accent }}
 									aria-label='How the leaderboard works'
 								>
 									<Info className='w-5 h-5' />
 									How It Works
 								</button>
 							</TooltipTrigger>
-							<TooltipContent className='max-w-xs bg-[#191F3B] text-white border border-[#EA6D0C] shadow-lg rounded-md p-3 text-sm'>
+							<TooltipContent
+								className='max-w-xs p-3 text-sm border rounded-md shadow-lg'
+								style={{
+									backgroundColor: COLORS.dark,
+									borderColor: COLORS.accent,
+									color: COLORS.light,
+								}}
+							>
 								The leaderboard ranks players based on their total wager amount
 								using the MisterTee affiliate code on Rainbet. Higher wagers
 								result in a better ranking.
@@ -96,23 +114,36 @@ function LeaderboardPage() {
 				</div>
 
 				{/* Affiliate Info */}
-				<div className='p-6 mb-10 rounded-lg bg-gray-300/20 border border-[#AF2D03] text-white shadow-md'>
-					<p className='mb-4 leading-relaxed text-gray-100'>
+				<div
+					className='p-6 mb-10 rounded-lg shadow-md'
+					style={{
+						backgroundColor: `${COLORS.light}33`,
+						border: `2px solid ${COLORS.primary}`,
+						color: COLORS.dark,
+					}}
+				>
+					<p className='mb-4 leading-relaxed'>
 						Use affiliate code{" "}
-						<span className='font-semibold text-[#AF2D03]'>MisterTee</span> on{" "}
+						<span className='font-semibold' style={{ color: COLORS.primary }}>
+							MisterTee
+						</span>{" "}
+						on{" "}
 						<a
 							href='https://rainbet.com'
 							target='_blank'
 							rel='noreferrer'
-							className='text-[#AF2D03] hover:underline'
+							style={{ color: COLORS.primary, textDecoration: "underline" }}
 						>
 							Rainbet
 						</a>{" "}
 						to appear on this leaderboard and compete for rewards!
 					</p>
 
-					<div className='inline-flex items-center gap-3 rounded-md bg-[#AF2D03]/30 px-4 py-2 w-max select-text'>
-						<span className='font-semibold text-[#AF2D03]'>
+					<div
+						className='inline-flex items-center gap-3 px-4 py-2 rounded-md select-text w-max'
+						style={{ backgroundColor: `${COLORS.primary}33` }}
+					>
+						<span className='font-semibold' style={{ color: COLORS.primary }}>
 							Affiliate Code:
 						</span>
 						<span className='font-bold text-white'>MisterTee</span>
@@ -123,7 +154,12 @@ function LeaderboardPage() {
 				{error && (
 					<Alert
 						variant='destructive'
-						className='mb-8 bg-[#AF2D03]/40 border-[#AF2D03] text-white shadow-md'
+						className='mb-8 shadow-md'
+						style={{
+							backgroundColor: `${COLORS.primary}40`,
+							borderColor: COLORS.primary,
+							color: COLORS.light,
+						}}
 					>
 						<AlertDescription>
 							Failed to load leaderboard: {error}
@@ -133,7 +169,10 @@ function LeaderboardPage() {
 
 				{/* Reward Cards */}
 				<section className='mb-12'>
-					<h2 className='mb-8 text-3xl font-bold text-center text-[#AF2D03] tracking-wide'>
+					<h2
+						className='mb-8 text-3xl font-bold tracking-wide text-center'
+						style={{ color: COLORS.primary }}
+					>
 						Top Players
 					</h2>
 					<div className='grid grid-cols-1 gap-8 md:grid-cols-3'>
@@ -142,7 +181,7 @@ function LeaderboardPage() {
 								<RewardCard
 									position='2nd Place'
 									reward='$250 Cash + Special Role'
-									backgroundColor='from-[#4E1800] to-[#AF2D03]'
+									backgroundColor={`from-${COLORS.dark} to-${COLORS.primary}`}
 									player={monthlyLeaderboard[1]}
 									icon={<Award className='text-yellow-400 w-9 h-9' />}
 									lightBg
@@ -150,7 +189,7 @@ function LeaderboardPage() {
 								<RewardCard
 									position='1st Place'
 									reward='$500 Cash + Special Role'
-									backgroundColor='from-[#AF2D03] to-[#7A1B00]'
+									backgroundColor={`from-${COLORS.primary} to-${COLORS.dark}`}
 									player={monthlyLeaderboard[0]}
 									icon={<Trophy className='w-10 h-10 text-yellow-300' />}
 									lightBg
@@ -158,7 +197,7 @@ function LeaderboardPage() {
 								<RewardCard
 									position='3rd Place'
 									reward='$100 Cash + Special Role'
-									backgroundColor='from-[#6E3D00] to-[#4B2700]'
+									backgroundColor={`from-${COLORS.dark} to-${COLORS.dark}`}
 									player={monthlyLeaderboard[2]}
 									icon={<Medal className='w-8 h-8 text-yellow-500' />}
 									lightBg
@@ -169,21 +208,21 @@ function LeaderboardPage() {
 								<RewardCard
 									position='1st Place'
 									reward='$500 Cash + Special Role'
-									backgroundColor='from-[#AF2D03] to-[#7A1B00]'
+									backgroundColor={`from-${COLORS.primary} to-${COLORS.dark}`}
 									icon={<Trophy className='w-10 h-10 text-yellow-300' />}
 									lightBg
 								/>
 								<RewardCard
 									position='2nd Place'
 									reward='$250 Cash + Special Role'
-									backgroundColor='from-[#4E1800] to-[#AF2D03]'
+									backgroundColor={`from-${COLORS.dark} to-${COLORS.primary}`}
 									icon={<Award className='text-yellow-400 w-9 h-9' />}
 									lightBg
 								/>
 								<RewardCard
 									position='3rd Place'
 									reward='$100 Cash + Special Role'
-									backgroundColor='from-[#6E3D00] to-[#4B2700]'
+									backgroundColor={`from-${COLORS.dark} to-${COLORS.dark}`}
 									icon={<Medal className='w-8 h-8 text-yellow-500' />}
 									lightBg
 								/>
@@ -195,18 +234,32 @@ function LeaderboardPage() {
 				{/* Leaderboard Table */}
 				<section>
 					<div className='flex flex-col items-center justify-center mb-6'>
-						<h2 className='text-2xl font-semibold text-center text-[#AF2D03] border-2 border-[#AF2D03] rounded-md py-2 px-8 inline-block'>
+						<h2
+							className='inline-block px-8 py-2 text-2xl font-semibold text-center border-2 rounded-md'
+							style={{ borderColor: COLORS.primary, color: COLORS.primary }}
+						>
 							Monthly Leaderboard
 						</h2>
-						<p className='mt-2 text-sm text-gray-300 select-none'>
+						<p
+							className='mt-2 text-sm select-none'
+							style={{ color: COLORS.light }}
+						>
 							Period: {start_at} → {end_at}
 						</p>
-						<p className='mt-1 text-sm text-gray-300 select-none'>{timeLeft}</p>
+						<p
+							className='mt-1 text-sm select-none'
+							style={{ color: COLORS.light }}
+						>
+							{timeLeft}
+						</p>
 					</div>
 
 					{isLoading ? (
 						<div className='flex items-center justify-center h-52'>
-							<Loader2 className='w-10 h-10 text-[#AF2D03] animate-spin' />
+							<Loader2
+								className='w-10 h-10 animate-spin'
+								style={{ color: COLORS.primary }}
+							/>
 						</div>
 					) : (
 						<LeaderboardTable period='monthly' data={monthlyLeaderboard} />
@@ -238,19 +291,27 @@ function RewardCard({
 }: RewardCardProps) {
 	return (
 		<div
-			className={`flex flex-col h-full overflow-hidden rounded-xl shadow-lg border border-[#AF2D03] ${
-				lightBg ? "bg-gray-300/20 text-[#ffffff]" : "text-white"
-			}`}
+			className={`flex flex-col h-full overflow-hidden rounded-xl shadow-lg border`}
 			style={{
-				background: lightBg
-					? undefined
-					: `linear-gradient(to right, var(--tw-gradient-stops))`,
+				borderColor: COLORS.primary,
+				background: lightBg ? `${COLORS.light}33` : undefined,
+				color: lightBg ? COLORS.light : COLORS.light,
 			}}
 		>
-			<div className={`h-2 bg-gradient-to-r ${backgroundColor}`} />
+			<div
+				className={`h-2 bg-gradient-to-r`}
+				style={{
+					background: `linear-gradient(to right, ${COLORS.dark}, ${COLORS.primary})`,
+				}}
+			/>
 			<div className='flex flex-col items-center flex-grow p-6 text-center'>
 				<div className='mb-5'>{icon}</div>
-				<h3 className='mb-3 text-xl font-bold tracking-wide'>{position}</h3>
+				<h3
+					className='mb-3 text-xl font-bold tracking-wide'
+					style={{ color: COLORS.primary }}
+				>
+					{position}
+				</h3>
 
 				{player ? (
 					<>
@@ -265,20 +326,14 @@ function RewardCard({
 							className='w-full mt-6'
 						>
 							<Button
-								className={`w-full ${
-									lightBg
-										? "bg-[#AF2D03] hover:bg-[#7A1B00] text-black font-semibold"
-										: "bg-[#AF2D03] hover:bg-[#7A1B00] text-black font-semibold"
-								}`}
+								className={`w-full bg-[#d7590b] hover:bg-[#6f3504] text-black font-semibold`}
 							>
 								Claim Prize
 							</Button>
 						</a>
 					</>
 				) : (
-					<p className={`text-lg font-medium ${lightBg ? "" : "text-white"}`}>
-						{reward}
-					</p>
+					<p className='text-lg font-medium'>{reward}</p>
 				)}
 			</div>
 		</div>

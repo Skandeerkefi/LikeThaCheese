@@ -27,32 +27,60 @@ const PRIZES: Record<LeaderboardPeriod, Record<number, number>> = {
 	monthly: { 1: 600, 2: 300, 3: 175, 4: 75, 5: 50, 6: 25, 7: 25 },
 };
 
+const COLORS = {
+	primary: "#d7590b",
+	accent: "#fcc63f",
+	dark: "#6f3504",
+	light: "#fbde96",
+};
+
 export function LeaderboardTable({ period, data }: LeaderboardTableProps) {
 	if (!data || data.length === 0) {
 		return (
-			<div className='py-10 italic text-center text-white/60'>
+			<div className='py-10 italic text-center' style={{ color: COLORS.light }}>
 				No leaderboard data available for {period}.
 			</div>
 		);
 	}
 
 	return (
-		<div className='overflow-x-auto rounded-2xl border-4 border-[#E10600] shadow-[0_0_12px_#E10600] bg-[#0d111c]'>
-			{/* Transparent Gray Background covering full inside of border */}
-			<div className='bg-black/50 backdrop-blur-sm '>
+		<div
+			className='overflow-x-auto border-4 shadow-lg rounded-2xl'
+			style={{
+				borderColor: COLORS.primary,
+				boxShadow: `0 0 12px ${COLORS.primary}`,
+				backgroundColor: COLORS.dark,
+			}}
+		>
+			<div className='bg-black/50 backdrop-blur-sm'>
 				<Table className='min-w-full'>
 					<TableHeader>
-						<TableRow className='bg-[#E10600]/20 hover:bg-[#ffff]/30 border-b border-white'>
-							<TableHead className='w-16 text-left text-[#FF4A00] font-semibold tracking-wide py-3 pl-6'>
+						<TableRow
+							className='border-b'
+							style={{ borderColor: `${COLORS.accent}33` }}
+						>
+							<TableHead
+								className='w-16 py-3 pl-6 font-semibold tracking-wide text-left'
+								style={{ color: COLORS.accent }}
+							>
 								Rank
 							</TableHead>
-							<TableHead className='py-3 pl-6 font-semibold tracking-wide text-left text-white'>
+							<TableHead
+								className='py-3 pl-6 font-semibold tracking-wide text-left'
+								style={{ color: COLORS.light }}
+							>
 								Player
 							</TableHead>
-							<TableHead className='text-right text-[#FF4A00] font-semibold tracking-wide py-3 pr-6'>
+							<TableHead
+								className='py-3 pr-6 font-semibold tracking-wide text-right'
+								style={{ color: COLORS.accent }}
+							>
 								Wager
 							</TableHead>
-							<TableHead className='text-right text-[#FF4A00] font-semibold tracking-wide py-3 pr-6'>
+							<TableHead
+								className='py-3 pr-6 font-semibold tracking-wide text-right'
+								style={{ color: COLORS.accent }}
+							>
 								Prize
 							</TableHead>
 						</TableRow>
@@ -65,19 +93,26 @@ export function LeaderboardTable({ period, data }: LeaderboardTableProps) {
 							return (
 								<TableRow
 									key={player.username}
-									className={`border-b border-[#E10600]/30  hover:bg-[#E10600]/10 cursor-default ${
-										player.isFeatured ? "bg-[#E10600]/15" : ""
-									}`}
+									className={`border-b cursor-default`}
+									style={{
+										borderColor: `${COLORS.accent}33`,
+										backgroundColor: player.isFeatured
+											? `${COLORS.primary}22`
+											: undefined,
+									}}
 								>
-									<TableCell className='py-3 pl-6 font-semibold text-[#FF4A00] text-center'>
+									<TableCell
+										className='py-3 pl-6 font-semibold text-center'
+										style={{ color: COLORS.accent }}
+									>
 										{isTop3 ? (
 											<Crown
 												className={`inline-block h-5 w-5 ${
 													player.rank === 1
-														? "text-[#FF3500]"
+														? "text-[#fcc63f]"
 														: player.rank === 2
-														? "text-[#FF6A00]"
-														: "text-[#FF8F4A]"
+														? "text-[#d7590b]"
+														: "text-[#6f3504]"
 												}`}
 												aria-label={`Rank ${player.rank}`}
 											/>
@@ -86,26 +121,38 @@ export function LeaderboardTable({ period, data }: LeaderboardTableProps) {
 										)}
 									</TableCell>
 
-									<TableCell className='py-3 pl-6 font-medium text-white whitespace-nowrap'>
+									<TableCell
+										className='py-3 pl-6 font-medium whitespace-nowrap'
+										style={{ color: COLORS.light }}
+									>
 										{player.username}
 										{player.isFeatured && (
 											<Badge
 												variant='outline'
-												className='text-[#E10600] border-[#E10600] ml-2 select-none'
+												className='ml-2 select-none'
+												style={{
+													color: COLORS.primary,
+													borderColor: COLORS.primary,
+												}}
 											>
 												Streamer
 											</Badge>
 										)}
 									</TableCell>
 
-									<TableCell className='py-3 pr-6 text-right text-[#FF4A00] font-mono font-semibold whitespace-nowrap'>
+									<TableCell
+										className='py-3 pr-6 font-mono font-semibold text-right whitespace-nowrap'
+										style={{ color: COLORS.accent }}
+									>
 										${player.wager.toLocaleString()}
 									</TableCell>
 
 									<TableCell
-										className={`py-3 pr-6 text-right font-semibold whitespace-nowrap ${
-											prize > 0 ? "text-[#FF4A00]" : "text-white/50 italic"
-										}`}
+										className='py-3 pr-6 font-semibold text-right whitespace-nowrap'
+										style={{
+											color: prize > 0 ? COLORS.accent : `${COLORS.light}99`,
+											fontStyle: prize > 0 ? "normal" : "italic",
+										}}
 									>
 										{prize > 0 ? `$${prize}` : "-"}
 									</TableCell>
