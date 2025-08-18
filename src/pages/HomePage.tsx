@@ -21,10 +21,10 @@ const COLORS = {
 function HomePage() {
 	const { slotCalls } = useSlotCallStore();
 	const { giveaways } = useGiveawayStore();
-	const { monthlyLeaderboard, fetchLeaderboard } = useLeaderboardStore();
+	const { leaderboard, fetchLeaderboard, period } = useLeaderboardStore();
 
-	const topLeaderboard = Array.isArray(monthlyLeaderboard)
-		? monthlyLeaderboard.slice(0, 5)
+	const topLeaderboard = Array.isArray(leaderboard)
+		? leaderboard.slice(0, 5)
 		: [];
 
 	const now = new Date();
@@ -33,10 +33,10 @@ function HomePage() {
 	const monthEndISO = monthEndDate.toISOString();
 
 	useEffect(() => {
-		if (monthlyLeaderboard.length === 0) {
+		if (!leaderboard || leaderboard.length === 0) {
 			fetchLeaderboard();
 		}
-	}, []);
+	}, [leaderboard, fetchLeaderboard]);
 
 	const [timeLeft, setTimeLeft] = useState("");
 
@@ -118,23 +118,34 @@ function HomePage() {
 						></iframe>
 					</div>
 				</section>
-
-				{/* Countdown Section */}
+				{/* Register + Countdown Section */}
 				<section
-					className='max-w-4xl px-6 py-10 mx-auto shadow-lg rounded-3xl'
+					className='relative flex flex-col items-center max-w-4xl gap-8 px-6 py-10 mx-auto my-16 shadow-lg rounded-3xl'
 					style={{
-						backgroundColor: COLORS.light,
-						border: `4px solid ${COLORS.primary}`,
+						background: `linear-gradient(135deg, ${COLORS.primary}33, ${COLORS.accent}22)`,
+						border: `3px solid ${COLORS.primary}`,
 					}}
 				>
+					{/* Title */}
 					<h2
-						className='mb-8 text-3xl font-semibold tracking-wide text-center'
+						className='text-3xl font-extrabold text-center'
 						style={{ color: COLORS.primary }}
 					>
-						⏳ Monthly Leaderboard Ends In
+						🎁 Register on Rainbet & Win Prizes!
 					</h2>
 
-					<div className='flex flex-col justify-center gap-6 text-center select-none sm:flex-row'>
+					{/* Description */}
+					<p
+						className='text-lg font-medium text-center'
+						style={{ color: COLORS.dark }}
+					>
+						Use the code{" "}
+						<span className='font-extrabold underline'>LIKETHACHEESE</span> when
+						registering to be eligible for prizes from the leaderboard.
+					</p>
+
+					{/* Countdown */}
+					<div className='flex flex-wrap justify-center gap-3'>
 						{["Days", "Hours", "Minutes", "Seconds"].map((label, idx) => {
 							const timeParts = timeLeft.split(" : ");
 							const value =
@@ -143,20 +154,34 @@ function HomePage() {
 							return (
 								<div
 									key={label}
-									className='flex flex-col items-center justify-center rounded-xl py-6 px-8 min-w-[80px] sm:min-w-[100px] shadow-sm'
-									style={{ backgroundColor: `${COLORS.accent}33` }}
+									className='flex flex-col items-center justify-center rounded-full px-4 py-3 min-w-[60px] shadow-sm transition-transform hover:scale-105'
+									style={{
+										background: `linear-gradient(135deg, ${COLORS.primary}, ${COLORS.accent})`,
+										color: COLORS.light,
+									}}
 								>
-									<span className='text-5xl font-extrabold'>{value}</span>
-									<span
-										className='mt-2 text-sm font-medium'
-										style={{ color: COLORS.primary }}
-									>
-										{label}
-									</span>
+									<span className='text-2xl font-bold'>{value}</span>
+									<span className='mt-1 text-xs font-semibold'>{label}</span>
 								</div>
 							);
 						})}
 					</div>
+
+					{/* Register Button */}
+					<Button
+						size='lg'
+						className='mt-6 transition-transform shadow-lg hover:scale-105'
+						style={{ backgroundColor: COLORS.dark, color: COLORS.light }}
+						asChild
+					>
+						<a
+							href='https://rain-bet.com/register'
+							target='_blank'
+							rel='noreferrer'
+						>
+							Register Now
+						</a>
+					</Button>
 				</section>
 
 				{/* Leaderboard */}

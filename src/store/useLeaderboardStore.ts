@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type LeaderboardPeriod = "monthly";
+export type LeaderboardPeriod = "monthly" | "weekly";
 
 export interface LeaderboardPlayer {
 	rank: number;
@@ -10,7 +10,7 @@ export interface LeaderboardPlayer {
 }
 
 interface LeaderboardState {
-	monthlyLeaderboard: LeaderboardPlayer[];
+	leaderboard: LeaderboardPlayer[];
 	period: LeaderboardPeriod;
 	isLoading: boolean;
 	error: string | null;
@@ -18,24 +18,49 @@ interface LeaderboardState {
 	fetchLeaderboard: () => Promise<void>;
 }
 
-const API_URL =
-	"http://localhost:3000/api/affiliates";
+const API_URL = "https://likethacheesedata.onrender.com/api/affiliates";
 
 const getDateRange = (
 	period: LeaderboardPeriod
 ): { start_at: string; end_at: string } => {
 	const now = new Date();
 
-	// Monthly: start at first day of month, end at last day of month
-	const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-	const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-	startDate.setHours(0, 0, 0, 0);
-	endDate.setHours(23, 59, 59, 999);
+	if (period === "monthly") {
+		// 📅 Current month range (auto resets each month)
+		const now = new Date();
 
-	return {
-		start_at: startDate.toISOString().split("T")[0],
-		end_at: endDate.toISOString().split("T")[0],
-	};
+		// First day of current month
+		const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+		startDate.setHours(0, 0, 0, 0);
+
+		// Last day of current month
+		const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+		endDate.setHours(23, 59, 59, 999);
+
+		return {
+			start_at: startDate.toISOString().split("T")[0],
+			end_at: endDate.toISOString().split("T")[0],
+		};
+	}
+
+	if (period === "weekly") {
+		// 📅 Weekly leaderboard (Aug 17 → Aug 24, then rolling weekly)
+		const baseStart = new Date("2025-08-17T00:00:00Z"); // first week
+		const baseEnd = new Date("2025-08-24T23:59:59Z");
+
+		// Move weeks forward until the correct range is found
+		while (now > baseEnd) {
+			baseStart.setDate(baseStart.getDate() + 7);
+			baseEnd.setDate(baseEnd.getDate() + 7);
+		}
+
+		return {
+			start_at: baseStart.toISOString().split("T")[0],
+			end_at: baseEnd.toISOString().split("T")[0],
+		};
+	}
+
+	throw new Error("Invalid period");
 };
 
 const processApiData = (data: any): LeaderboardPlayer[] => {
@@ -56,8 +81,8 @@ const processApiData = (data: any): LeaderboardPlayer[] => {
 		.map((player, idx) => ({ ...player, rank: idx + 1 }));
 };
 
-export const useLeaderboardStore = create<LeaderboardState>((set) => ({
-	monthlyLeaderboard: [],
+export const useLeaderboardStore = create<LeaderboardState>((set, get) => ({
+	leaderboard: [],
 	period: "monthly",
 	isLoading: false,
 	error: null,
@@ -65,7 +90,8 @@ export const useLeaderboardStore = create<LeaderboardState>((set) => ({
 	fetchLeaderboard: async () => {
 		set({ isLoading: true, error: null });
 		try {
-			const { start_at, end_at } = getDateRange("monthly");
+			const { period } = get();
+			const { start_at, end_at } = getDateRange(period);
 			const response = await fetch(
 				`${API_URL}?start_at=${start_at}&end_at=${end_at}`
 			);
@@ -82,7 +108,7 @@ export const useLeaderboardStore = create<LeaderboardState>((set) => ({
 			const data = await response.json();
 			const processedData = processApiData(data);
 
-			set({ monthlyLeaderboard: processedData });
+			set({ leaderboard: processedData });
 		} catch (error) {
 			set({
 				error: error instanceof Error ? error.message : "Unknown error",

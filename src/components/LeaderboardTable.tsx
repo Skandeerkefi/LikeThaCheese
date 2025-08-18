@@ -9,7 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Crown } from "lucide-react";
 
-type LeaderboardPeriod = "monthly";
+type LeaderboardPeriod = "monthly" | "weekly";
 
 interface LeaderboardPlayer {
 	rank: number;
@@ -24,7 +24,8 @@ interface LeaderboardTableProps {
 }
 
 const PRIZES: Record<LeaderboardPeriod, Record<number, number>> = {
-	monthly: { 1: 600, 2: 300, 3: 175, 4: 75, 5: 50, 6: 25, 7: 25 },
+	monthly: { 1: 150, 2: 75, 3: 25 },
+	weekly: { 1: 150, 2: 100, 3: 50 }, // 🆕 add weekly prize pool
 };
 
 const COLORS = {

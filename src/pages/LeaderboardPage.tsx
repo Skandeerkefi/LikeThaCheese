@@ -5,6 +5,7 @@ import { LeaderboardTable } from "@/components/LeaderboardTable";
 import {
 	useLeaderboardStore,
 	LeaderboardPlayer,
+	LeaderboardPeriod,
 } from "@/store/useLeaderboardStore";
 import { Crown, Info, Loader2, Trophy, Award, Medal } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import GraphicalBackground from "@/components/GraphicalBackground";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const COLORS = {
 	primary: "#d7590b",
@@ -25,26 +27,64 @@ const COLORS = {
 };
 
 function LeaderboardPage() {
-	const { monthlyLeaderboard, fetchLeaderboard, isLoading, error } =
+	const { leaderboard, period, setPeriod, fetchLeaderboard, isLoading, error } =
 		useLeaderboardStore();
 
-	useEffect(() => {
-		fetchLeaderboard();
-	}, [fetchLeaderboard]);
-
-	const now = new Date();
-	const start_at = new Date(now.getFullYear(), now.getMonth(), 1)
-		.toISOString()
-		.split("T")[0];
-	const end_at = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-		.toISOString()
-		.split("T")[0];
-
+	// ⏳ time left countdown
 	const [timeLeft, setTimeLeft] = useState<string>("");
 
 	useEffect(() => {
+		fetchLeaderboard();
+	}, [period, fetchLeaderboard]);
+
+	// compute current date range depending on period
+	const [dateRange, setDateRange] = useState<{ start: string; end: string }>({
+		start: "",
+		end: "",
+	});
+
+	useEffect(() => {
+		const fetchRange = () => {
+			const now = new Date();
+
+			if (period === "monthly") {
+				// 📅 Always reset monthly leaderboard from 1st → last day of current month
+				const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+				startDate.setHours(0, 0, 0, 0);
+
+				const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+				endDate.setHours(23, 59, 59, 999);
+
+				setDateRange({
+					start: startDate.toISOString().split("T")[0],
+					end: endDate.toISOString().split("T")[0],
+				});
+			} else if (period === "weekly") {
+				const baseStart = new Date("2025-08-17T00:00:00Z");
+				const baseEnd = new Date("2025-08-24T23:59:59Z");
+
+				while (now > baseEnd) {
+					baseStart.setDate(baseStart.getDate() + 7);
+					baseEnd.setDate(baseEnd.getDate() + 7);
+				}
+
+				setDateRange({
+					start: baseStart.toISOString().split("T")[0],
+					end: baseEnd.toISOString().split("T")[0],
+				});
+			}
+		};
+
+		fetchRange();
+	}, [period]);
+
+
+	// countdown ticker
+	useEffect(() => {
+		if (!dateRange.end) return;
+
 		const interval = setInterval(() => {
-			const endDate = new Date(end_at + "T23:59:59");
+			const endDate = new Date(dateRange.end + "T23:59:59");
 			const now = new Date();
 			const diff = endDate.getTime() - now.getTime();
 
@@ -63,7 +103,7 @@ function LeaderboardPage() {
 		}, 1000);
 
 		return () => clearInterval(interval);
-	}, [end_at]);
+	}, [dateRange]);
 
 	return (
 		<div className='relative flex flex-col min-h-screen text-white'>
@@ -81,7 +121,7 @@ function LeaderboardPage() {
 					>
 						<Crown className='w-7 h-7' />
 						<h1 className='text-3xl font-extrabold tracking-tight'>
-							Rainbet Monthly Leaderboard
+							Rainbet Leaderboard
 						</h1>
 					</div>
 
@@ -106,49 +146,34 @@ function LeaderboardPage() {
 								}}
 							>
 								The leaderboard ranks players based on their total wager amount
-								using the MisterTee affiliate code on Rainbet. Higher wagers
+								using the LIKETHACHEESE affiliate code on Rainbet. Higher wagers
 								result in a better ranking.
 							</TooltipContent>
 						</Tooltip>
 					</TooltipProvider>
 				</div>
 
-				{/* Affiliate Info */}
-				<div
-					className='p-6 mb-10 rounded-lg shadow-md'
-					style={{
-						backgroundColor: `${COLORS.light}33`,
-						border: `2px solid ${COLORS.primary}`,
-						color: COLORS.dark,
-					}}
+				{/* Tabs for Monthly / Weekly */}
+				<Tabs
+					value={period}
+					onValueChange={(val) => setPeriod(val as LeaderboardPeriod)}
+					className='mb-8'
 				>
-					<p className='mb-4 leading-relaxed'>
-						Use affiliate code{" "}
-						<span className='font-semibold' style={{ color: COLORS.primary }}>
-							MisterTee
-						</span>{" "}
-						on{" "}
-						<a
-							href='https://rainbet.com'
-							target='_blank'
-							rel='noreferrer'
-							style={{ color: COLORS.primary, textDecoration: "underline" }}
+					<TabsList className='grid w-full grid-cols-2 bg-[#693806] p-1 rounded-2xl shadow-md'>
+						<TabsTrigger
+							value='monthly'
+							className='text-white data-[state=active]:bg-[#AF2D03] data-[state=active]:text-white rounded-xl transition-colors'
 						>
-							Rainbet
-						</a>{" "}
-						to appear on this leaderboard and compete for rewards!
-					</p>
-
-					<div
-						className='inline-flex items-center gap-3 px-4 py-2 rounded-md select-text w-max'
-						style={{ backgroundColor: `${COLORS.primary}33` }}
-					>
-						<span className='font-semibold' style={{ color: COLORS.primary }}>
-							Affiliate Code:
-						</span>
-						<span className='font-bold text-white'>MisterTee</span>
-					</div>
-				</div>
+							Monthly
+						</TabsTrigger>
+						<TabsTrigger
+							value='weekly'
+							className='text-white data-[state=active]:bg-[#EA6D0C] data-[state=active]:text-white rounded-xl transition-colors'
+						>
+							Weekly
+						</TabsTrigger>
+					</TabsList>
+				</Tabs>
 
 				{/* Error Alert */}
 				{error && (
@@ -176,57 +201,34 @@ function LeaderboardPage() {
 						Top Players
 					</h2>
 					<div className='grid grid-cols-1 gap-8 md:grid-cols-3'>
-						{monthlyLeaderboard.length > 0 ? (
+						{leaderboard.length > 0 ? (
 							<>
 								<RewardCard
 									position='2nd Place'
-									reward='$250 Cash + Special Role'
-									backgroundColor={`from-${COLORS.dark} to-${COLORS.primary}`}
-									player={monthlyLeaderboard[1]}
+									reward={period === "monthly" ? "$75" : "$100"}
+									player={leaderboard[1]}
 									icon={<Award className='text-yellow-400 w-9 h-9' />}
 									lightBg
 								/>
 								<RewardCard
 									position='1st Place'
-									reward='$500 Cash + Special Role'
-									backgroundColor={`from-${COLORS.primary} to-${COLORS.dark}`}
-									player={monthlyLeaderboard[0]}
-									icon={<Trophy className='w-10 h-10 text-yellow-300' />}
+									reward={period === "monthly" ? "$150" : "$150"}
+									player={leaderboard[0]}
+									icon={<Trophy className='w-10 h-10 text-orange-300' />}
 									lightBg
 								/>
 								<RewardCard
 									position='3rd Place'
-									reward='$100 Cash + Special Role'
-									backgroundColor={`from-${COLORS.dark} to-${COLORS.dark}`}
-									player={monthlyLeaderboard[2]}
+									reward={period === "monthly" ? "$25" : "$50"}
+									player={leaderboard[2]}
 									icon={<Medal className='w-8 h-8 text-yellow-500' />}
 									lightBg
 								/>
 							</>
 						) : (
-							<>
-								<RewardCard
-									position='1st Place'
-									reward='$500 Cash + Special Role'
-									backgroundColor={`from-${COLORS.primary} to-${COLORS.dark}`}
-									icon={<Trophy className='w-10 h-10 text-yellow-300' />}
-									lightBg
-								/>
-								<RewardCard
-									position='2nd Place'
-									reward='$250 Cash + Special Role'
-									backgroundColor={`from-${COLORS.dark} to-${COLORS.primary}`}
-									icon={<Award className='text-yellow-400 w-9 h-9' />}
-									lightBg
-								/>
-								<RewardCard
-									position='3rd Place'
-									reward='$100 Cash + Special Role'
-									backgroundColor={`from-${COLORS.dark} to-${COLORS.dark}`}
-									icon={<Medal className='w-8 h-8 text-yellow-500' />}
-									lightBg
-								/>
-							</>
+							<p className='col-span-3 italic text-center'>
+								No leaderboard data available
+							</p>
 						)}
 					</div>
 				</section>
@@ -238,17 +240,17 @@ function LeaderboardPage() {
 							className='inline-block px-8 py-2 text-2xl font-semibold text-center border-2 rounded-md'
 							style={{ borderColor: COLORS.primary, color: COLORS.primary }}
 						>
-							Monthly Leaderboard
+							{period === "monthly" ? "Monthly" : "Weekly"} Leaderboard
 						</h2>
 						<p
 							className='mt-2 text-sm select-none'
-							style={{ color: COLORS.light }}
+							style={{ color: "#EA6D0C" }}
 						>
-							Period: {start_at} → {end_at}
+							Period: {dateRange.start} → {dateRange.end}
 						</p>
 						<p
 							className='mt-1 text-sm select-none'
-							style={{ color: COLORS.light }}
+							style={{ color: "#EA6D0C" }}
 						>
 							{timeLeft}
 						</p>
@@ -262,7 +264,7 @@ function LeaderboardPage() {
 							/>
 						</div>
 					) : (
-						<LeaderboardTable period='monthly' data={monthlyLeaderboard} />
+						<LeaderboardTable period={period} data={leaderboard} />
 					)}
 				</section>
 			</main>
@@ -275,7 +277,6 @@ function LeaderboardPage() {
 interface RewardCardProps {
 	position: string;
 	reward: string;
-	backgroundColor: string;
 	player?: LeaderboardPlayer;
 	icon?: React.ReactNode;
 	lightBg?: boolean;
@@ -284,7 +285,6 @@ interface RewardCardProps {
 function RewardCard({
 	position,
 	reward,
-	backgroundColor,
 	player,
 	icon,
 	lightBg = false,
@@ -295,7 +295,7 @@ function RewardCard({
 			style={{
 				borderColor: COLORS.primary,
 				background: lightBg ? `${COLORS.light}33` : undefined,
-				color: lightBg ? COLORS.light : COLORS.light,
+				color: COLORS.light,
 			}}
 		>
 			<div
@@ -315,19 +315,19 @@ function RewardCard({
 
 				{player ? (
 					<>
-						<p className='text-lg font-semibold'>{player.username}</p>
-						<p className='text-lg font-medium'>
+						<p className='text-lg font-semibold text-black'>
+							{player.username}
+						</p>
+						<p className='text-lg font-medium text-black'>
 							$ {player.wager.toLocaleString()}
 						</p>
 						<a
-							href='https://discord.gg/YmvDexVt'
+							href='https://discord.gg/s7hgvGGaV4'
 							target='_blank'
 							rel='noreferrer'
 							className='w-full mt-6'
 						>
-							<Button
-								className={`w-full bg-[#d7590b] hover:bg-[#6f3504] text-black font-semibold`}
-							>
+							<Button className='w-full bg-[#d7590b] hover:bg-[#6f3504] text-black font-semibold'>
 								Claim Prize
 							</Button>
 						</a>
