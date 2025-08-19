@@ -250,10 +250,16 @@ function LeaderboardPage() {
 						>
 							{period === "monthly" ? "Monthly" : "Weekly"} Leaderboard
 						</h2>
-						<p className='mt-2 text-sm select-none' style={{ color: "#EA6D0C" }}>
+						<p
+							className='mt-2 text-sm select-none'
+							style={{ color: "#EA6D0C" }}
+						>
 							Period: {dateRange.start} → {dateRange.end}
 						</p>
-						<p className='mt-1 text-sm select-none' style={{ color: "#EA6D0C" }}>
+						<p
+							className='mt-1 text-sm select-none'
+							style={{ color: "#EA6D0C" }}
+						>
 							{timeLeft}
 						</p>
 					</div>
@@ -270,27 +276,29 @@ function LeaderboardPage() {
 					)}
 
 					{/* 🎲 Admin Winner Picker */}
-					{user?.role === "admin" && period === "weekly" && leaderboard.length > 0 && (
-						<div className='mt-8 text-center'>
-							<Button
-								onClick={handlePickWinner}
-								className='bg-[#AF2D03] hover:bg-[#6f3504] text-white font-semibold flex items-center gap-2'
-							>
-								<Sparkles className='w-5 h-5' /> Pick Random Winner
-							</Button>
+					{user?.role === "admin" &&
+						period === "weekly" &&
+						leaderboard.length > 0 && (
+							<div className='mt-8 text-center'>
+								<Button
+									onClick={handlePickWinner}
+									className='bg-[#AF2D03] hover:bg-[#6f3504] text-white font-semibold flex items-center gap-2'
+								>
+									<Sparkles className='w-5 h-5' /> Pick Random Winner
+								</Button>
 
-							{pickedWinner && (
-								<div className='mt-4 p-4 border rounded-xl shadow-md bg-[#191F3B]'>
-									<p className='text-lg font-bold text-[#EA6D0C]'>
-										🎉 Winner: {pickedWinner.username}
-									</p>
-									<p className='text-sm text-gray-300'>
-										Wager: ${pickedWinner.wager.toLocaleString()}
-									</p>
-								</div>
-							)}
-						</div>
-					)}
+								{pickedWinner && (
+									<div className='mt-4 p-4 border rounded-xl shadow-md bg-[#693806]'>
+										<p className='text-lg font-bold text-[#EA6D0C]'>
+											🎉 Winner: {pickedWinner.username}
+										</p>
+										<p className='text-sm text-gray-300'>
+											Wager: ${pickedWinner.wager.toLocaleString()}
+										</p>
+									</div>
+								)}
+							</div>
+						)}
 				</section>
 			</main>
 
