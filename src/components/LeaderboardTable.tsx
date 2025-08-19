@@ -23,9 +23,10 @@ interface LeaderboardTableProps {
 	data: LeaderboardPlayer[] | undefined;
 }
 
-const PRIZES: Record<LeaderboardPeriod, Record<number, number>> = {
+// Updated prizes: weekly only has 1st place with "W. W. W."
+const PRIZES: Record<LeaderboardPeriod, Record<number, string | number>> = {
 	monthly: { 1: 150, 2: 75, 3: 25 },
-	weekly: { 1: 150, 2: 100, 3: 50 }, // 🆕 add weekly prize pool
+	weekly: { 1: "W. W. W." },
 };
 
 const COLORS = {
@@ -88,7 +89,7 @@ export function LeaderboardTable({ period, data }: LeaderboardTableProps) {
 					</TableHeader>
 					<TableBody>
 						{data.map((player) => {
-							const prize = PRIZES[period]?.[player.rank] || 0;
+							const prize = PRIZES[period]?.[player.rank] ?? null;
 							const isTop3 = player.rank <= 3;
 
 							return (
@@ -151,11 +152,11 @@ export function LeaderboardTable({ period, data }: LeaderboardTableProps) {
 									<TableCell
 										className='py-3 pr-6 font-semibold text-right whitespace-nowrap'
 										style={{
-											color: prize > 0 ? COLORS.accent : `${COLORS.light}99`,
-											fontStyle: prize > 0 ? "normal" : "italic",
+											color: prize ? COLORS.accent : `${COLORS.light}99`,
+											fontStyle: prize ? "normal" : "italic",
 										}}
 									>
-										{prize > 0 ? `$${prize}` : "-"}
+										{prize ?? "-"}
 									</TableCell>
 								</TableRow>
 							);
