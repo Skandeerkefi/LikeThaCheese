@@ -146,7 +146,7 @@ export function LeaderboardTable({ period, data }: LeaderboardTableProps) {
 										className='py-3 pr-6 font-mono font-semibold text-right whitespace-nowrap'
 										style={{ color: COLORS.accent }}
 									>
-										${player.wager.toLocaleString()}
+										${player.wager.toLocaleString("de-DE")}
 									</TableCell>
 
 									<TableCell
