@@ -7,7 +7,7 @@ import {
 	LeaderboardPlayer,
 	LeaderboardPeriod,
 } from "@/store/useLeaderboardStore";
-import { Crown, Info, Loader2, Trophy, Award, Medal } from "lucide-react";
+import { Crown, Info, Loader2, Trophy, Award, Medal, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	Tooltip,
@@ -17,7 +17,10 @@ import {
 } from "@/components/ui/tooltip";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import GraphicalBackground from "@/components/GraphicalBackground";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+// 🟠 replace with your actual auth hook/store
+import { useAuthStore } from "@/store/useAuthStore"; 
 
 const COLORS = {
 	primary: "#d7590b",
@@ -29,9 +32,13 @@ const COLORS = {
 function LeaderboardPage() {
 	const { leaderboard, period, setPeriod, fetchLeaderboard, isLoading, error } =
 		useLeaderboardStore();
+	const { user } = useAuthStore(); // 🟠 current logged-in user
 
 	// ⏳ time left countdown
 	const [timeLeft, setTimeLeft] = useState<string>("");
+
+	// 🎲 picked winner (admin only)
+	const [pickedWinner, setPickedWinner] = useState<LeaderboardPlayer | null>(null);
 
 	useEffect(() => {
 		fetchLeaderboard();
@@ -48,7 +55,6 @@ function LeaderboardPage() {
 			const now = new Date();
 
 			if (period === "monthly") {
-				// 📅 Always reset monthly leaderboard from 1st → last day of current month
 				const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
 				startDate.setHours(0, 0, 0, 0);
 
@@ -78,7 +84,6 @@ function LeaderboardPage() {
 		fetchRange();
 	}, [period]);
 
-
 	// countdown ticker
 	useEffect(() => {
 		if (!dateRange.end) return;
@@ -105,11 +110,16 @@ function LeaderboardPage() {
 		return () => clearInterval(interval);
 	}, [dateRange]);
 
+	// 🎲 Pick random winner from weekly leaderboard
+	const handlePickWinner = () => {
+		if (leaderboard.length === 0) return;
+		const randomIndex = Math.floor(Math.random() * leaderboard.length);
+		setPickedWinner(leaderboard[randomIndex]);
+	};
+
 	return (
 		<div className='relative flex flex-col min-h-screen text-white'>
-			{/* Background Canvas */}
 			<GraphicalBackground />
-
 			<Navbar />
 
 			<main className='container relative z-10 flex-grow max-w-6xl px-6 py-12 mx-auto'>
@@ -131,7 +141,6 @@ function LeaderboardPage() {
 								<button
 									className='flex items-center gap-1 text-sm font-semibold transition-colors'
 									style={{ color: COLORS.accent }}
-									aria-label='How the leaderboard works'
 								>
 									<Info className='w-5 h-5' />
 									How It Works
@@ -146,14 +155,13 @@ function LeaderboardPage() {
 								}}
 							>
 								The leaderboard ranks players based on their total wager amount
-								using the LIKETHACHEESE affiliate code on Rainbet. Higher wagers
-								result in a better ranking.
+								using the LIKETHACHEESE affiliate code on Rainbet.
 							</TooltipContent>
 						</Tooltip>
 					</TooltipProvider>
 				</div>
 
-				{/* Tabs for Monthly / Weekly */}
+				{/* Tabs */}
 				<Tabs
 					value={period}
 					onValueChange={(val) => setPeriod(val as LeaderboardPeriod)}
@@ -175,7 +183,7 @@ function LeaderboardPage() {
 					</TabsList>
 				</Tabs>
 
-				{/* Error Alert */}
+				{/* Error */}
 				{error && (
 					<Alert
 						variant='destructive'
@@ -242,16 +250,10 @@ function LeaderboardPage() {
 						>
 							{period === "monthly" ? "Monthly" : "Weekly"} Leaderboard
 						</h2>
-						<p
-							className='mt-2 text-sm select-none'
-							style={{ color: "#EA6D0C" }}
-						>
+						<p className='mt-2 text-sm select-none' style={{ color: "#EA6D0C" }}>
 							Period: {dateRange.start} → {dateRange.end}
 						</p>
-						<p
-							className='mt-1 text-sm select-none'
-							style={{ color: "#EA6D0C" }}
-						>
+						<p className='mt-1 text-sm select-none' style={{ color: "#EA6D0C" }}>
 							{timeLeft}
 						</p>
 					</div>
@@ -265,6 +267,29 @@ function LeaderboardPage() {
 						</div>
 					) : (
 						<LeaderboardTable period={period} data={leaderboard} />
+					)}
+
+					{/* 🎲 Admin Winner Picker */}
+					{user?.role === "admin" && period === "weekly" && leaderboard.length > 0 && (
+						<div className='mt-8 text-center'>
+							<Button
+								onClick={handlePickWinner}
+								className='bg-[#AF2D03] hover:bg-[#6f3504] text-white font-semibold flex items-center gap-2'
+							>
+								<Sparkles className='w-5 h-5' /> Pick Random Winner
+							</Button>
+
+							{pickedWinner && (
+								<div className='mt-4 p-4 border rounded-xl shadow-md bg-[#191F3B]'>
+									<p className='text-lg font-bold text-[#EA6D0C]'>
+										🎉 Winner: {pickedWinner.username}
+									</p>
+									<p className='text-sm text-gray-300'>
+										Wager: ${pickedWinner.wager.toLocaleString()}
+									</p>
+								</div>
+							)}
+						</div>
 					)}
 				</section>
 			</main>
