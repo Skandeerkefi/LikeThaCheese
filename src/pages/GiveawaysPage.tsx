@@ -161,7 +161,15 @@ function GiveawaysPage() {
 									id={giveaway._id}
 									title={giveaway.title}
 									prize='Surprise Prize'
-									endTime={new Date(giveaway.endTime).toLocaleString()}
+									endTime={new Date(giveaway.endTime).toLocaleString("en-US", {
+										timeZone: "America/Los_Angeles",
+										year: "numeric",
+										month: "short",
+										day: "numeric",
+										hour: "2-digit",
+										minute: "2-digit",
+										hour12: true,
+									})}
 									participants={giveaway.totalParticipants}
 									maxParticipants={100}
 									status={giveaway.status}
