@@ -175,7 +175,7 @@ function HomePage() {
 						asChild
 					>
 						<a
-							href='https://rain-bet.com/register'
+							href='https://rainbet.com/?r=LikeThaCheese'
 							target='_blank'
 							rel='noreferrer'
 						>
