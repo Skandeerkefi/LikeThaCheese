@@ -183,6 +183,80 @@ function HomePage() {
 						</a>
 					</Button>
 				</section>
+				{/* Bonus Section */}
+				<section className='max-w-6xl px-6 mx-auto my-20'>
+					<div
+						className='relative p-10 text-center border-4 shadow-xl rounded-3xl'
+						style={{
+							borderColor: COLORS.primary,
+							backgroundColor: COLORS.light,
+						}}
+					>
+						{/* Ribbon */}
+						<div className='absolute top-0 left-0 px-4 py-1 text-sm font-bold text-white bg-red-600 shadow-md rounded-tr-2xl rounded-bl-2xl'>
+							Exclusive Offer
+						</div>
+
+						{/* Title */}
+						<h2
+							className='mb-4 text-4xl font-extrabold'
+							style={{ color: COLORS.primary }}
+						>
+							💰 10% Deposit Bonus
+						</h2>
+
+						{/* Subtitle */}
+						<p
+							className='mb-8 text-lg font-medium'
+							style={{ color: COLORS.dark }}
+						>
+							Deposit with code{" "}
+							<span
+								className='px-3 py-1 font-bold text-white rounded-lg'
+								style={{ backgroundColor: COLORS.primary }}
+							>
+								LIKETHACHEESE
+							</span>{" "}
+							and earn <strong>10% cashback up to $100</strong>.
+						</p>
+
+						{/* Card Content */}
+						<div
+							className='max-w-xl p-6 mx-auto mb-8 shadow-inner rounded-2xl'
+							style={{
+								background: `linear-gradient(135deg, ${COLORS.accent}40, ${COLORS.primary}25)`,
+								border: `2px dashed ${COLORS.primary}`,
+							}}
+						>
+							<p
+								className='text-base font-medium'
+								style={{ color: COLORS.dark }}
+							>
+								After depositing, click below to verify and claim your bonus
+								directly in our Discord community 🎉
+							</p>
+						</div>
+
+						{/* CTA */}
+						<Button
+							size='lg'
+							className='px-8 py-4 text-lg font-bold transition-transform shadow-lg rounded-xl hover:scale-105'
+							style={{
+								backgroundColor: COLORS.primary,
+								color: COLORS.light,
+							}}
+							asChild
+						>
+							<a
+								href='https://discord.gg/s7hgvGGaV4' // replace with your invite
+								target='_blank'
+								rel='noreferrer'
+							>
+								🎁 Claim Bonus on Discord
+							</a>
+						</Button>
+					</div>
+				</section>
 
 				{/* Leaderboard */}
 				<section className='container py-16'>
