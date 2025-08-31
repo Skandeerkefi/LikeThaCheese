@@ -25,7 +25,7 @@ interface LeaderboardTableProps {
 
 // Updated prizes: weekly only has 1st place with "W. W. W."
 const PRIZES: Record<LeaderboardPeriod, Record<number, string | number>> = {
-	monthly: { 1: 150, 2: 75, 3: 25 },
+	monthly: { 1: 300, 2: 120, 3: 60,4:25,5:10,6:5,7:5,8:5,9:5,10:5 },
 	weekly: { 1: "W. W. W." },
 };
 
