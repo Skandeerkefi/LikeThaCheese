@@ -88,7 +88,7 @@ export function LeaderboardTable({ period, data }: LeaderboardTableProps) {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{data.map((player) => {
+						{(period === "monthly" ? data.slice(0, 10) : data).map((player) => {
 							const prize = PRIZES[period]?.[player.rank] ?? null;
 							const isTop3 = player.rank <= 3;
 
