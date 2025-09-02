@@ -43,7 +43,7 @@ export const useSlotCallStore = create<SlotCallState>((set, get) => ({
 		set({ isSubmitting: true });
 		try {
 			const res = await fetch(
-				"likethacheesedata.railway.internal/api/slot-calls",
+				"likethacheesedata-production.up.railway.app/api/slot-calls",
 				{
 					method: "POST",
 					headers: {
@@ -92,7 +92,7 @@ export const useSlotCallStore = create<SlotCallState>((set, get) => ({
 
 		try {
 			const res = await fetch(
-				`likethacheesedata.railway.internal/api/slot-calls/${id}/bonus-call`,
+				`likethacheesedata-production.up.railway.app/api/slot-calls/${id}/bonus-call`,
 				{
 					method: "POST",
 					headers: {
@@ -127,7 +127,7 @@ export const useSlotCallStore = create<SlotCallState>((set, get) => ({
 
 		try {
 			const res = await fetch(
-				`likethacheesedata.railway.internal/api/slot-calls/${id}/status`,
+				`likethacheesedata-production.up.railway.app/api/slot-calls/${id}/status`,
 				{
 					method: "POST",
 					headers: {
@@ -169,7 +169,7 @@ export const useSlotCallStore = create<SlotCallState>((set, get) => ({
 
 		try {
 			const res = await fetch(
-				`likethacheesedata.railway.internal/api/slot-calls/${id}`,
+				`likethacheesedata-production.up.railway.app/api/slot-calls/${id}`,
 				{
 					method: "DELETE",
 					headers: {
@@ -200,8 +200,8 @@ export const useSlotCallStore = create<SlotCallState>((set, get) => ({
 
 		const url =
 			userRole === "admin"
-				? "likethacheesedata.railway.internal/api/slot-calls"
-				: "likethacheesedata.railway.internal/api/slot-calls/my";
+				? "likethacheesedata-production.up.railway.app/api/slot-calls"
+				: "likethacheesedata-production.up.railway.app/api/slot-calls/my";
 
 		try {
 			const res = await fetch(url, {
