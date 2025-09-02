@@ -18,7 +18,7 @@ interface LeaderboardState {
 	fetchLeaderboard: () => Promise<void>;
 }
 
-const API_URL = "likethacheesedata-production.up.railway.app/api/affiliates";
+const API_URL = "https://likethacheesedata-production.up.railway.app/api/affiliates";
 
 const getDateRange = (
 	period: LeaderboardPeriod
